@@ -2,10 +2,15 @@ from rest_framework import serializers
 from .models import Color, Person
 
 
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+
 class ColorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Color
-        fields = ['color_name', 'id']
+        fields = ['color_name']
 
 
 class PeopleSerializer(serializers.ModelSerializer):
@@ -18,7 +23,7 @@ class PeopleSerializer(serializers.ModelSerializer):
         # depth = 1
 
     def get_colorInfo(self, obj):
-        colorObj = Color.objects.get(id=1)
+        colorObj = Color.objects.get(id=3)
         return {"color": colorObj.color_name, "hexCode": "#000"}
 
     def validate(self, data):
