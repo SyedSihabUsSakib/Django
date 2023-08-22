@@ -1,4 +1,4 @@
-from home.views import index, login, people, color, PersonAPI, peopleViewSet
+from home.views import LoginAPI, RegisterAPI, index, login, people, color, PersonAPI, peopleViewSet
 from django.urls import include, path
 
 
@@ -10,6 +10,8 @@ urlpatterns = router.urls
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('registerapi/', RegisterAPI.as_view()),
+    path('loginapi/', LoginAPI.as_view()),
     path('index/', index),
     path('people/', people),
     path('color/', color),
