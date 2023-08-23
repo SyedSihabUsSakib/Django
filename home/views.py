@@ -1,12 +1,14 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 
 from home.models import Person, Color
 from home.serializers import ColorSerializer, LoginSerializer, PeopleSerializer, RegisterSerializer
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework import status
-from django.contrib.auth.models import User
+
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 
@@ -71,7 +73,11 @@ def index(request):
 
 
 class PersonAPI(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
     def get(self, request):
+        print(request.user)
         objs = Person.objects.all()
         # print(objs)
         serializer = PeopleSerializer(objs, many=True)
