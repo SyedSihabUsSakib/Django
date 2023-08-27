@@ -1,4 +1,5 @@
 from rest_framework.decorators import api_view
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
@@ -224,6 +225,7 @@ def login(request):
 class peopleViewSet(viewsets.ModelViewSet):
     serializer_class = PeopleSerializer
     queryset = Person.objects.all()
+    http_method_names = ['post', 'get']
 
     def list(self, request):
         search = request.GET.get('search')
@@ -232,3 +234,14 @@ class peopleViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(name__startswith=search)
         serializer = PeopleSerializer(queryset, many=True)
         return Response({'status': 200, 'data': serializer.data}, status=status.HTTP_202_ACCEPTED)
+
+    @action(detail=True, methods=['post'])
+    def send_mail_to_person(self, request, pk):
+        # print(pk)
+        obj = Person.objects.get(pk=pk)
+        serializer = PeopleSerializer(obj)
+        return Response({
+            'status': True,
+            'Message': 'Email sent successfully',
+            'data': serializer.data
+        })
