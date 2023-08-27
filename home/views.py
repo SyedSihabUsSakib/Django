@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from django.core.paginator import Paginator
 
 from home.models import Person, Color
 from home.serializers import ColorSerializer, LoginSerializer, PeopleSerializer, RegisterSerializer
@@ -77,11 +78,22 @@ class PersonAPI(APIView):
     authentication_classes = [TokenAuthentication]
 
     def get(self, request):
-        print(request.user)
-        objs = Person.objects.all()
-        # print(objs)
-        serializer = PeopleSerializer(objs, many=True)
-        return Response(serializer.data)
+        try:
+            print(request.user)
+            objs = Person.objects.all()
+            # print(objs)
+            pageNumber = request.GET.get('page', 1)
+            pageSize = 3
+            paginator = Paginator(objs, pageSize)
+
+            serializer = PeopleSerializer(
+                paginator.page(pageNumber), many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({
+                'status': False,
+                'Message': 'invalid PageNumber'
+            }, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request):
         data = request.data
